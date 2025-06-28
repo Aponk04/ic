@@ -4,131 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulir Persetujuan dengan Tanda Tangan Elektronik</title>
-    <style>
-        /* CSS tidak ada perubahan */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-            -webkit-text-size-adjust: 100%;
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 25px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-        h1 {
-            text-align: center;
-            color: #444;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        .signature-pad-container {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            position: relative;
+   <style>
+    /* CSS tidak ada perubahan */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: #333;
+        -webkit-text-size-adjust: 100%;
+    }
+    .form-container {
+        background-color: #fff;
+        padding: 25px 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+    }
+    h1 {
+        text-align: center;
+        color: #444;
+        margin-bottom: 25px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    .signature-pad-container {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        position: relative;
+    }
+    
+    /* ===== KODE YANG DIPERBAIKI (1) ===== */
+    canvas#signature-pad {
+        cursor: crosshair;
+        display: block;
+    }
+    
+    .buttons-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.1s;
+    }
+    button#clear-signature {
+        background-color: #f0ad4e;
+        color: white;
+    }
+    button#save-form {
+        background-color: #337ab7;
+        color: white;
+        width: 100%;
+        margin-top: 20px;
+    }
+    #pdf-content {
+        display: none;
+        width: 215.9mm;
+        padding: 15mm;
+        box-sizing: border-box;
+        color: #000;
+        background: #fff;
+        font-size: 14px;
+    }
+    #pdf-content p, #pdf-content li {
+        line-height: 1.5;
+        text-align: justify;
+    }
+    #pdf-content .signature-image {
+        display: block;
+        width: 150px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    .pdf-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+    }
+    #pdf-logo {
+        height: 80px;
+        width: auto;
+        margin-right: 40px;
+    }
+    #pdf-content h2 {
+        margin: 0;
+        text-decoration: none;
+        font-size: 20px; /* Ukuran dari kode Anda sebelumnya, dipindahkan ke sini */
+    }
+    
+    /* ===== KODE YANG DIPERBAIKI (2) ===== */
+   /* KODE BARU (Rata Kanan) */
+.closing-section {
+    /* Memberi jarak dari konten di atasnya */
+    margin-top: 40px; 
 
-        }
-        canvas#signature-pad {
-            /*width: 100%;
-            height: 100%;*/
-            cursor: crosshair;
-            display: block; /* Tambahkan ini agar lebih konsisten */}
-        
-        .buttons-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-        button#clear-signature {
-            background-color: #f0ad4e;
-            color: white;
-        }
-        button#save-form {
-            background-color: #337ab7;
-            color: white;
-            width: 100%;
-            margin-top: 20px;
-        }
-        /* [PERBAIKAN CSS] Mengubah lebar template agar sesuai dengan kertas Letter (8.5 inci) */
-        #pdf-content {
-            display: none;
-            width: 215.9mm; /* Lebar kertas Letter */
-            padding: 15mm; /* Padding bisa disesuaikan */
-            box-sizing: border-box;
-            color: #000;
-            background: #fff;
-            font-size: 12px;
-        }
-        #pdf-content h2 {
-            text-align: center;
-            text-decoration: underline;
-            font-size: 16px;
-        }
-        #pdf-content p, #pdf-content li {
-            line-height: 1.5; /* Sedikit mengurangi spasi antar baris agar lebih pas */
-            text-align: justify;
-        }
-        #pdf-content .signature-image {
-             display: block;
-             width: 150px;
-             height: auto;
-             margin-bottom: 10px;
-        }
+    /* Mengatur lebar blok tanda tangan */
+    width: 45%; 
+    
+    /* KUNCI UTAMA: Mendorong blok ke kanan */
+    margin-left: auto; 
+    
+    /* Memastikan tidak ada margin di sisi kanan */
+    margin-right: 0; 
 
-        .pdf-header {
-            display: flex;
-            align-items: center; /* Membuat logo dan judul sejajar secara vertikal */
-            justify-content: center; /* Membuat grup (logo + judul) berada di tengah */
-            border-bottom: 2px solid #000; /* Garis bawah kop surat */
-            padding-bottom: 10px;
-            margin-bottom: 25px; /* Jarak dari kop surat ke konten di bawahnya */
-                }
-
-        #pdf-logo {
-            height: 50px; /* Atur tinggi logo, lebar akan menyesuaikan otomatis */
-            width: auto;
-            margin-right: 20px; /* Jarak antara logo dan judul */
-                }
-
-        #pdf-content h2 {
-        /* Atur ulang beberapa properti judul agar rapi dengan flexbox */
-        margin: 0; /* Hapus margin default dari h2 */
-        text-decoration: none; /* Hapus garis bawah dari judul karena sudah ada di kop */
-                }
-    </style>
+    /* Mengatur perataan teks di dalam blok. 'center' biasanya terlihat lebih baik. */
+    text-align: left;}
+}
+</style>
 </head>
 <body>
 
@@ -190,7 +200,7 @@
                 <li>Memahami bahwa layanan akan diberikan oleh tenaga kesehatan yang profesional dan kompeten dari LIfe Care</li>
                 <li>Memahami bahwa saya memiliki hak untuk menolak atau menghentikan layanan kapan saja setelah memberikan pemberitahuan yang cukup kepada Life Care.</li>
                 <li>Memahami kewajiban saya sebagai pasien/penerima layanan sebagaimana tercantum dalam [dokumen Hak dan Kewajiban Pasien.</li>
-                <li>Memberikan persetujuan penuh kepada Life Care untuk menyediakan layanan home care kesehatan kepada pasien yang disebutkan di atas sesuai dengan informasi yang telah dijelaskan.</li>
+                <li>Memberikan persetujuan penuh kepada Life Care untuk menyediakan layanan home care kesehatan kepada saya atau keluarga saya yang disebutkan di atas sesuai dengan informasi yang telah dijelaskan.</li>
             </ol>
         </p>
         <p>
@@ -200,12 +210,15 @@
             Demikian surat persetujuan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
         </p>
         <br><br>
-        <p>Hormat saya,</p>
+         <div class="closing-section">
+            <p id="pdf-date"></p>
+            <p>Hormat saya,</p>
 
-        <div id="signature-section">
-            <div id="pdf-signature"></div>
-            <div>
-                <strong><u><span id="pdf-nama-bawah"></span></u></strong>
+            <div id="signature-section">
+                <div id="pdf-signature"></div>
+                <div>
+                    <strong><u><span id="pdf-nama-bawah"></span></u></strong>
+                </div>
             </div>
         </div>
     </div>
@@ -263,6 +276,12 @@
                 // 4. SETELAH berhasil, sisipkan Data URL ke 'src' gambar
                 logoElement.src = logoDataUrl;
 
+                   // --- Menambahkan tanggal dinamis ---
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const today = new Date();
+                const formattedDate = `jakarta, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+                document.getElementById('pdf-date').innerText = formattedDate;
+
                 // --- Pengisian data form tetap sama ---
                 const nama = document.getElementById('nama').value;
                 const alamat = document.getElementById('alamat').value;
@@ -294,15 +313,15 @@
                         
                         const imgData = canvasRendered.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
-                        const doc = new jsPDF('p', 'mm', 'letter');
+                        const doc = new jsPDF('p', 'mm', 'legal');
                         
                         const pdfWidth = doc.internal.pageSize.getWidth();
                         const pdfHeight = doc.internal.pageSize.getHeight();
-                        const imgWidth = pdfWidth - 30;
+                        const imgWidth = pdfWidth - 20;
                         const imgHeight = (canvasRendered.height * imgWidth) / canvasRendered.width;
                         let finalHeight = imgHeight;
-                        if (finalHeight > (pdfHeight - 20)) {
-                            finalHeight = pdfHeight - 20;
+                        if (finalHeight > (pdfHeight - 10)) {
+                            finalHeight = pdfHeight - 10;
                         }
                         const xPos = (pdfWidth - imgWidth) / 2;
                         const yPos = 10;
