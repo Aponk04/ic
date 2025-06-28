@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Persetujuan dengan Tanda Tangan Elektronik</title>
+    <style>
+        /* CSS tidak ada perubahan */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            -webkit-text-size-adjust: 100%;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 25px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .signature-pad-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+
+        }
+        canvas#signature-pad {
+            /*width: 100%;
+            height: 100%;*/
+            cursor: crosshair;
+            display: block; /* Tambahkan ini agar lebih konsisten */}
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button#clear-signature {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        button#save-form {
+            background-color: #337ab7;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+        /* [PERBAIKAN CSS] Mengubah lebar template agar sesuai dengan kertas Letter (8.5 inci) */
+        #pdf-content {
+            display: none;
+            width: 215.9mm; /* Lebar kertas Letter */
+            padding: 15mm; /* Padding bisa disesuaikan */
+            box-sizing: border-box;
+            color: #000;
+            background: #fff;
+            font-size: 12px;
+        }
+        #pdf-content h2 {
+            text-align: center;
+            text-decoration: underline;
+            font-size: 16px;
+        }
+        #pdf-content p, #pdf-content li {
+            line-height: 1.5; /* Sedikit mengurangi spasi antar baris agar lebih pas */
+            text-align: justify;
+        }
+        #pdf-content .signature-image {
+             display: block;
+             width: 150px;
+             height: auto;
+             margin-bottom: 10px;
+        }
+
+        .pdf-header {
+            display: flex;
+            align-items: center; /* Membuat logo dan judul sejajar secara vertikal */
+            justify-content: center; /* Membuat grup (logo + judul) berada di tengah */
+            border-bottom: 2px solid #000; /* Garis bawah kop surat */
+            padding-bottom: 10px;
+            margin-bottom: 25px; /* Jarak dari kop surat ke konten di bawahnya */
+                }
+
+        #pdf-logo {
+            height: 50px; /* Atur tinggi logo, lebar akan menyesuaikan otomatis */
+            width: auto;
+            margin-right: 20px; /* Jarak antara logo dan judul */
+                }
+
+        #pdf-content h2 {
+        /* Atur ulang beberapa properti judul agar rapi dengan flexbox */
+        margin: 0; /* Hapus margin default dari h2 */
+        text-decoration: none; /* Hapus garis bawah dari judul karena sudah ada di kop */
+                }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Formulir Persetujuan</h1>
+        <form id="approval-form">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap:</label>
+                <input type="text" id="nama" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label for="alamat">Alamat:</label>
+                <textarea id="alamat" name="alamat" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="noKtp">No. KTP:</label>
+                <input type="text" id="noKtp" name="noKtp" required pattern="\d{16}" title="Harap masukkan 16 digit nomor KTP">
+            </div>
+            <div class="form-group">
+                <label>Tanda Tangan Elektronik:</label>
+                <div class="signature-pad-container">
+                    <canvas id="signature-pad"></canvas>
+                </div>
+                 <div class="buttons-container">
+                    <button type="button" id="clear-signature">Hapus Tanda Tangan</button>
+                </div>
+            </div>
+            <button type="submit" id="save-form">Simpan dan Buat Surat Persetujuan</button>
+        </form>
+    </div>
+
+    <div id="pdf-content">
+         <div class="pdf-header">
+        <img id="pdf-logo" src="https://github.com/Aponk04/logilivecare/blob/main/LOGO%203.png?raw=true" crossorigin="anonymous">
+        <h2>SURAT PERSETUJUAN</h2>
+    </div>
+        <br>
+        <p>Saya yang bertanda tangan di bawah ini:</p>
+        <table>
+            <tr>
+                <td style="width: 120px;"><strong>Nama</strong></td>
+                <td>: <span id="pdf-nama"></span></td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;"><strong>Alamat</strong></td>
+                <td style="vertical-align: top;">: <span id="pdf-alamat"></span></td>
+            </tr>
+            <tr>
+                <td><strong>No. KTP</strong></td>
+                <td>: <span id="pdf-noKtp"></span></td>
+            </tr>
+        </table>
+        <br>
+        <p>
+            Dengan ini menyatakan bahwa saya telah membaca, memahami, dan menyetujui sepenuhnya semua syarat dan ketentuan yang tercantum dalam Dokumen ini.
+            <ol>
+                <li>Menerima penjelasan yang jelas dan memahami sepenuhnya mengenai jenis layanan home care yang akan diterima, tujuan layanan, prosedur pelaksanaan, potensi risiko, komplikasi, serta perkiraan hasil dari layanan tersebut.</li>
+                <li>Diberikan kesempatan untuk bertanya dan semua pertanyaan saya telah dijawab oleh pihak Life Care.</li>
+                <li>Memahami bahwa layanan akan diberikan oleh tenaga kesehatan yang profesional dan kompeten dari LIfe Care</li>
+                <li>Memahami bahwa saya memiliki hak untuk menolak atau menghentikan layanan kapan saja setelah memberikan pemberitahuan yang cukup kepada Life Care.</li>
+                <li>Memahami kewajiban saya sebagai pasien/penerima layanan sebagaimana tercantum dalam [dokumen Hak dan Kewajiban Pasien.</li>
+                <li>Memberikan persetujuan penuh kepada Life Care untuk menyediakan layanan home care kesehatan kepada pasien yang disebutkan di atas sesuai dengan informasi yang telah dijelaskan.</li>
+            </ol>
+        </p>
+        <p>
+            Persetujuan ini saya berikan dalam keadaan sadar, sehat jasmani dan rohani, serta tanpa ada paksaan dari pihak manapun.
+        </p>
+        <p>
+            Demikian surat persetujuan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
+        </p>
+        <br><br>
+        <p>Hormat saya,</p>
+
+        <div id="signature-section">
+            <div id="pdf-signature"></div>
+            <div>
+                <strong><u><span id="pdf-nama-bawah"></span></u></strong>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('signature-pad');
+        const signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)'
+        });
+
+        document.getElementById('clear-signature').addEventListener('click', function() {
+            signaturePad.clear();
+        });
+
+        // =================================================================
+        // PERUBAHAN UTAMA DIMULAI DARI SINI
+        // =================================================================
+
+        // Jadikan fungsi event listener ini 'async' untuk menggunakan 'await'
+        document.getElementById('approval-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            if (signaturePad.isEmpty()) {
+                alert("Mohon bubuhkan tanda tangan Anda terlebih dahulu.");
+                return;
+            }
+
+            // Tampilkan pesan loading agar pengguna tahu proses sedang berjalan
+            const submitButton = document.getElementById('save-form');
+            submitButton.disabled = true;
+            submitButton.innerText = 'Memproses...';
+
+            try {
+                // 1. Ambil elemen logo dan URL-nya
+                const logoElement = document.getElementById('pdf-logo');
+                const logoUrl = 'https://raw.githubusercontent.com/Aponk04/logilivecare/main/LOGO%203.png?raw=true';
+
+                // 2. Gunakan 'fetch' untuk mengunduh gambar sebagai 'blob'
+                const response = await fetch(logoUrl);
+                const imageBlob = await response.blob();
+
+                // 3. Gunakan FileReader untuk mengubah blob menjadi Data URL (format base64)
+                const logoDataUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(imageBlob);
+                });
+
+                // 4. SETELAH berhasil, sisipkan Data URL ke 'src' gambar
+                logoElement.src = logoDataUrl;
+
+                // --- Pengisian data form tetap sama ---
+                const nama = document.getElementById('nama').value;
+                const alamat = document.getElementById('alamat').value;
+                const noKtp = document.getElementById('noKtp').value;
+                const signatureDataUrl = signaturePad.toDataURL('image/png');
+
+                document.getElementById('pdf-nama').innerText = nama;
+                document.getElementById('pdf-nama-bawah').innerText = nama;
+                document.getElementById('pdf-alamat').innerText = alamat;
+                document.getElementById('pdf-noKtp').innerText = noKtp;
+                document.getElementById('pdf-signature').innerHTML = `<img src="${signatureDataUrl}" class="signature-image" />`;
+
+                const pdfContent = document.getElementById('pdf-content');
+                pdfContent.style.display = 'block';
+                pdfContent.style.position = 'absolute';
+                pdfContent.style.left = '-9999px';
+
+                // 5. Jalankan html2canvas SETELAH gambar dijamin termuat
+                // Kita beri sedikit jeda agar DOM sempat memperbarui 'src' gambar
+                setTimeout(() => {
+                    html2canvas(pdfContent, {
+                        scale: 2,
+                        useCORS: true,
+                        // Pastikan scroll kembali ke atas untuk tangkapan layar yang konsisten
+                        scrollY: -window.scrollY 
+                    }).then(canvasRendered => {
+                        pdfContent.style.display = 'none';
+                        pdfContent.style.position = 'static';
+                        
+                        const imgData = canvasRendered.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF('p', 'mm', 'letter');
+                        
+                        const pdfWidth = doc.internal.pageSize.getWidth();
+                        const pdfHeight = doc.internal.pageSize.getHeight();
+                        const imgWidth = pdfWidth - 30;
+                        const imgHeight = (canvasRendered.height * imgWidth) / canvasRendered.width;
+                        let finalHeight = imgHeight;
+                        if (finalHeight > (pdfHeight - 20)) {
+                            finalHeight = pdfHeight - 20;
+                        }
+                        const xPos = (pdfWidth - imgWidth) / 2;
+                        const yPos = 10;
+
+                        doc.addImage(imgData, 'PNG', xPos, yPos, imgWidth, finalHeight);
+                        doc.save(`Surat-Persetujuan-${nama.replace(/\s/g, '_')}.pdf`);
+                        
+                        alert('Surat persetujuan Anda sudah disimpan (diunduh ke folder download Anda).');
+                        
+                        document.getElementById('approval-form').reset();
+                        signaturePad.clear();
+
+                    }).catch(err => {
+                        console.error("Gagal membuat PDF:", err);
+                        alert("Terjadi kesalahan saat membuat PDF. Silakan coba lagi.");
+                    }).finally(() => {
+                        // Kembalikan tombol ke keadaan semula, baik berhasil maupun gagal
+                        submitButton.disabled = false;
+                        submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
+                    });
+                }, 200); // Beri jeda 200ms
+
+            } catch (error) {
+                console.error("Gagal memuat sumber daya gambar:", error);
+                alert("Gagal memuat logo untuk PDF. Periksa koneksi internet Anda dan coba lagi.");
+                submitButton.disabled = false;
+                submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
+            }
+        });
+    });
+</script>
+</body>
+</html>
