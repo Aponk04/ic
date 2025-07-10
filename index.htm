@@ -4,141 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulir Persetujuan dengan Tanda Tangan Elektronik</title>
-   <style>
-    /* CSS tidak ada perubahan */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        color: #333;
-        -webkit-text-size-adjust: 100%;
-    }
-    .form-container {
-        background-color: #fff;
-        padding: 25px 40px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        width: 100%;
-        max-width: 600px;
-    }
-    h1 {
-        text-align: center;
-        color: #444;
-        margin-bottom: 25px;
-    }
-    .form-group {
-        margin-bottom: 20px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-    }
-    .form-group input, .form-group textarea {
-        width: 100%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        box-sizing: border-box;
-        font-size: 16px;
-    }
-    .signature-pad-container {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        position: relative;
-    }
-    
-    /* ===== KODE YANG DIPERBAIKI (1) ===== */
-    canvas#signature-pad {
-        cursor: crosshair;
-        display: block;
-    }
-    
-    .buttons-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-    }
-    button {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 16px;
-        transition: background-color 0.3s, transform 0.1s;
-    }
-    button#clear-signature {
-        background-color: #f0ad4e;
-        color: white;
-    }
-    button#save-form {
-        background-color: #337ab7;
-        color: white;
-        width: 100%;
-        margin-top: 20px;
-    }
-    #pdf-content {
-        display: none;
-        width: 215.9mm;
-        padding: 15mm;
-        box-sizing: border-box;
-        color: #000;
-        background: #fff;
-        font-size: 14px;
-    }
-    #pdf-content p, #pdf-content li {
-        line-height: 1.5;
-        text-align: justify;
-    }
-    #pdf-content .signature-image {
-        display: block;
-        width: 150px;
-        height: auto;
-        margin-bottom: 10px;
-    }
-    .pdf-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-        margin-bottom: 25px;
-    }
-    #pdf-logo {
-        height: 80px;
-        width: auto;
-        margin-right: 40px;
-    }
-    #pdf-content h2 {
-        margin: 0;
-        text-decoration: none;
-        font-size: 20px; /* Ukuran dari kode Anda sebelumnya, dipindahkan ke sini */
-    }
-    
-    /* ===== KODE YANG DIPERBAIKI (2) ===== */
-   /* KODE BARU (Rata Kanan) */
-.closing-section {
-    /* Memberi jarak dari konten di atasnya */
-    margin-top: 40px; 
-
-    /* Mengatur lebar blok tanda tangan */
-    width: 45%; 
-    
-    /* KUNCI UTAMA: Mendorong blok ke kanan */
-    margin-left: auto; 
-    
-    /* Memastikan tidak ada margin di sisi kanan */
-    margin-right: 0; 
-
-    /* Mengatur perataan teks di dalam blok. 'center' biasanya terlihat lebih baik. */
-    text-align: left;}
-}
-</style>
+    <style>
+        /* CSS tidak ada perubahan */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            -webkit-text-size-adjust: 100%;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 25px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .signature-pad-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        canvas#signature-pad {
+            cursor: crosshair;
+            display: block;
+            /* Pastikan canvas mengisi kontainer parent-nya */
+            width: 100%; 
+            height: 200px; /* Atur tinggi default atau sesuaikan */
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button#clear-signature {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        button#save-form {
+            background-color: #337ab7;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+        #pdf-content {
+            display: none;
+            width: 215.9mm; /* Lebar A4 */
+            min-height: 279.4mm; /* Tinggi Legal */
+            padding: 15mm;
+            box-sizing: border-box;
+            color: #000;
+            background: #fff;
+            font-size: 14px;
+        }
+        #pdf-content p, #pdf-content li {
+            line-height: 1.5;
+            text-align: justify;
+        }
+        #pdf-content .signature-image {
+            display: block;
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #000; /* Tambahkan garis bawah pada tanda tangan */
+            padding-bottom: 5px;
+        }
+        .pdf-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        #pdf-logo {
+            height: 80px;
+            width: auto;
+            margin-right: 40px;
+        }
+        #pdf-content h2 {
+            margin: 0;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        
+        .closing-section {
+            margin-top: 40px; 
+            width: 45%; 
+            margin-left: auto; 
+            margin-right: 0; 
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
 
@@ -149,6 +143,12 @@
                 <label for="nama">Nama Lengkap:</label>
                 <input type="text" id="nama" name="nama" required>
             </div>
+
+            <div class="form-group">
+                <label for="tempatTanggalLahir">Tempat tanggal lahir:</label>
+                <input type="text" id="tempatTanggalLahir" name="tempatTanggalLahir" required>
+            </div>
+
             <div class="form-group">
                 <label for="alamat">Alamat:</label>
                 <textarea id="alamat" name="alamat" rows="3" required></textarea>
@@ -162,7 +162,7 @@
                 <div class="signature-pad-container">
                     <canvas id="signature-pad"></canvas>
                 </div>
-                 <div class="buttons-container">
+                <div class="buttons-container">
                     <button type="button" id="clear-signature">Hapus Tanda Tangan</button>
                 </div>
             </div>
@@ -171,16 +171,20 @@
     </div>
 
     <div id="pdf-content">
-         <div class="pdf-header">
-        <img id="pdf-logo" src="https://github.com/Aponk04/logilivecare/blob/main/LOGO%203.png?raw=true" crossorigin="anonymous">
-        <h2>SURAT PERSETUJUAN</h2>
-    </div>
+        <div class="pdf-header">
+            <img id="pdf-logo" src="https://github.com/Aponk04/logilivecare/blob/main/LOGO%203.png?raw=true" crossorigin="anonymous">
+            <h2>SURAT PERSETUJUAN</h2>
+        </div>
         <br>
         <p>Saya yang bertanda tangan di bawah ini:</p>
         <table>
             <tr>
                 <td style="width: 120px;"><strong>Nama</strong></td>
                 <td>: <span id="pdf-nama"></span></td>
+            </tr>
+            <tr>
+                <td style="width: 120px;"><strong>Tempat tanggal lahir</strong></td>
+                <td>: <span id="pdf-tempatTanggalLahir"></span></td>
             </tr>
             <tr>
                 <td style="vertical-align: top;"><strong>Alamat</strong></td>
@@ -210,10 +214,9 @@
             Demikian surat persetujuan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
         </p>
         <br><br>
-         <div class="closing-section">
+        <div class="closing-section">
             <p id="pdf-date"></p>
             <p>Hormat saya,</p>
-
             <div id="signature-section">
                 <div id="pdf-signature"></div>
                 <div>
@@ -227,131 +230,142 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const canvas = document.getElementById('signature-pad');
-        const signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)'
-        });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('signature-pad');
+            const signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)'
+            });
 
-        document.getElementById('clear-signature').addEventListener('click', function() {
-            signaturePad.clear();
-        });
-
-        // =================================================================
-        // PERUBAHAN UTAMA DIMULAI DARI SINI
-        // =================================================================
-
-        // Jadikan fungsi event listener ini 'async' untuk menggunakan 'await'
-        document.getElementById('approval-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            if (signaturePad.isEmpty()) {
-                alert("Mohon bubuhkan tanda tangan Anda terlebih dahulu.");
-                return;
+            // Fungsi untuk mengatur ukuran canvas agar responsif
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext('2d').scale(ratio, ratio);
+                signaturePad.clear(); // Bersihkan tanda tangan setelah resize
             }
 
-            // Tampilkan pesan loading agar pengguna tahu proses sedang berjalan
-            const submitButton = document.getElementById('save-form');
-            submitButton.disabled = true;
-            submitButton.innerText = 'Memproses...';
+            // Panggil resize saat halaman dimuat dan saat ukuran jendela berubah
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas(); // Panggil pertama kali untuk mengatur ukuran awal
 
-            try {
-                // 1. Ambil elemen logo dan URL-nya
-                const logoElement = document.getElementById('pdf-logo');
-                const logoUrl = 'https://raw.githubusercontent.com/Aponk04/logilivecare/main/LOGO%203.png?raw=true';
+            document.getElementById('clear-signature').addEventListener('click', function() {
+                signaturePad.clear();
+            });
 
-                // 2. Gunakan 'fetch' untuk mengunduh gambar sebagai 'blob'
-                const response = await fetch(logoUrl);
-                const imageBlob = await response.blob();
+            document.getElementById('approval-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
 
-                // 3. Gunakan FileReader untuk mengubah blob menjadi Data URL (format base64)
-                const logoDataUrl = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(imageBlob);
-                });
+                if (signaturePad.isEmpty()) {
+                    alert("Mohon bubuhkan tanda tangan Anda terlebih dahulu.");
+                    return;
+                }
 
-                // 4. SETELAH berhasil, sisipkan Data URL ke 'src' gambar
-                logoElement.src = logoDataUrl;
+                const submitButton = document.getElementById('save-form');
+                submitButton.disabled = true;
+                submitButton.innerText = 'Memproses...';
 
-                   // --- Menambahkan tanggal dinamis ---
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                const today = new Date();
-                const formattedDate = `jakarta, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
-                document.getElementById('pdf-date').innerText = formattedDate;
+                try {
+                    const logoElement = document.getElementById('pdf-logo');
+                    const logoUrl = 'https://raw.githubusercontent.com/Aponk04/logilivecare/main/LOGO%203.png?raw=true';
 
-                // --- Pengisian data form tetap sama ---
-                const nama = document.getElementById('nama').value;
-                const alamat = document.getElementById('alamat').value;
-                const noKtp = document.getElementById('noKtp').value;
-                const signatureDataUrl = signaturePad.toDataURL('image/png');
-
-                document.getElementById('pdf-nama').innerText = nama;
-                document.getElementById('pdf-nama-bawah').innerText = nama;
-                document.getElementById('pdf-alamat').innerText = alamat;
-                document.getElementById('pdf-noKtp').innerText = noKtp;
-                document.getElementById('pdf-signature').innerHTML = `<img src="${signatureDataUrl}" class="signature-image" />`;
-
-                const pdfContent = document.getElementById('pdf-content');
-                pdfContent.style.display = 'block';
-                pdfContent.style.position = 'absolute';
-                pdfContent.style.left = '-9999px';
-
-                // 5. Jalankan html2canvas SETELAH gambar dijamin termuat
-                // Kita beri sedikit jeda agar DOM sempat memperbarui 'src' gambar
-                setTimeout(() => {
-                    html2canvas(pdfContent, {
-                        scale: 2,
-                        useCORS: true,
-                        // Pastikan scroll kembali ke atas untuk tangkapan layar yang konsisten
-                        scrollY: -window.scrollY 
-                    }).then(canvasRendered => {
-                        pdfContent.style.display = 'none';
-                        pdfContent.style.position = 'static';
-                        
-                        const imgData = canvasRendered.toDataURL('image/png');
-                        const { jsPDF } = window.jspdf;
-                        const doc = new jsPDF('p', 'mm', 'legal');
-                        
-                        const pdfWidth = doc.internal.pageSize.getWidth();
-                        const pdfHeight = doc.internal.pageSize.getHeight();
-                        const imgWidth = pdfWidth - 20;
-                        const imgHeight = (canvasRendered.height * imgWidth) / canvasRendered.width;
-                        let finalHeight = imgHeight;
-                        if (finalHeight > (pdfHeight - 10)) {
-                            finalHeight = pdfHeight - 10;
-                        }
-                        const xPos = (pdfWidth - imgWidth) / 2;
-                        const yPos = 10;
-
-                        doc.addImage(imgData, 'PNG', xPos, yPos, imgWidth, finalHeight);
-                        doc.save(`Surat-Persetujuan-${nama.replace(/\s/g, '_')}.pdf`);
-                        
-                        alert('Surat persetujuan Anda sudah disimpan (diunduh ke folder download Anda).');
-                        
-                        document.getElementById('approval-form').reset();
-                        signaturePad.clear();
-
-                    }).catch(err => {
-                        console.error("Gagal membuat PDF:", err);
-                        alert("Terjadi kesalahan saat membuat PDF. Silakan coba lagi.");
-                    }).finally(() => {
-                        // Kembalikan tombol ke keadaan semula, baik berhasil maupun gagal
-                        submitButton.disabled = false;
-                        submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
+                    // Gunakan 'fetch' untuk mengunduh gambar sebagai 'blob' dan ubah ke Data URL
+                    const response = await fetch(logoUrl, { cache: 'no-cache' }); // Tambahkan no-cache untuk gambar yang mungkin berubah
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const imageBlob = await response.blob();
+                    const logoDataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageBlob);
                     });
-                }, 200); // Beri jeda 200ms
+                    logoElement.src = logoDataUrl; // Setel src gambar dengan Data URL
 
-            } catch (error) {
-                console.error("Gagal memuat sumber daya gambar:", error);
-                alert("Gagal memuat logo untuk PDF. Periksa koneksi internet Anda dan coba lagi.");
-                submitButton.disabled = false;
-                submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
-            }
+                    // --- Menambahkan tanggal dinamis ---
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                    const today = new Date();
+                    const formattedDate = `Jakarta, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`; // Menggunakan Makassar sebagai lokasi sesuai waktu saat ini
+                    document.getElementById('pdf-date').innerText = formattedDate;
+
+                    // --- Pengisian data form ---
+                    const nama = document.getElementById('nama').value;
+                    const tempatTanggalLahir = document.getElementById('tempatTanggalLahir').value; // Mengambil dari id yang benar
+                    const alamat = document.getElementById('alamat').value;
+                    const noKtp = document.getElementById('noKtp').value;
+                    const signatureDataUrl = signaturePad.toDataURL('image/png');
+
+                    document.getElementById('pdf-nama').innerText = nama;
+                    document.getElementById('pdf-tempatTanggalLahir').innerText = tempatTanggalLahir; // Memperbaiki pengisian
+                    document.getElementById('pdf-nama-bawah').innerText = nama;
+                    document.getElementById('pdf-alamat').innerText = alamat;
+                    document.getElementById('pdf-noKtp').innerText = noKtp;
+                    document.getElementById('pdf-signature').innerHTML = `<img src="${signatureDataUrl}" class="signature-image" />`;
+
+                    const pdfContent = document.getElementById('pdf-content');
+                    pdfContent.style.display = 'block';
+                    pdfContent.style.position = 'absolute';
+                    pdfContent.style.left = '-9999px'; // Sembunyikan dari layar
+
+                    // Beri sedikit jeda agar DOM sempat memperbarui 'src' gambar dan elemen lainnya
+                    setTimeout(() => {
+                        html2canvas(pdfContent, {
+                            scale: 2,
+                            useCORS: true,
+                            scrollY: -window.scrollY // Pastikan scroll kembali ke atas untuk tangkapan layar yang konsisten
+                        }).then(canvasRendered => {
+                            pdfContent.style.display = 'none'; // Sembunyikan lagi setelah render
+                            pdfContent.style.position = 'static'; // Kembalikan posisi
+
+                            const imgData = canvasRendered.toDataURL('image/png');
+                            const { jsPDF } = window.jspdf;
+                            const doc = new jsPDF('p', 'mm', 'legal'); // Format Legal (215.9mm x 355.6mm)
+                            
+                            const pdfWidth = doc.internal.pageSize.getWidth();
+                            const pdfHeight = doc.internal.pageSize.getHeight();
+                            const margin = 10; // Margins
+                            const imgWidth = pdfWidth - (margin * 2);
+                            let imgHeight = (canvasRendered.height * imgWidth) / canvasRendered.width;
+                            
+                            // Check if image height exceeds page height, if so, scale down
+                            if (imgHeight > pdfHeight - (margin * 2)) {
+                                imgHeight = pdfHeight - (margin * 2);
+                                // Recalculate width to maintain aspect ratio
+                                const newImgWidth = (canvasRendered.width * imgHeight) / canvasRendered.height;
+                                // Center the image horizontally if it's scaled down
+                                const newXPos = (pdfWidth - newImgWidth) / 2;
+                                doc.addImage(imgData, 'PNG', newXPos, margin, newImgWidth, imgHeight);
+                            } else {
+                                const xPos = (pdfWidth - imgWidth) / 2;
+                                doc.addImage(imgData, 'PNG', xPos, margin, imgWidth, imgHeight);
+                            }
+
+                            doc.save(`Surat-Persetujuan-${nama.replace(/\s/g, '_')}.pdf`);
+                            
+                            alert('Surat persetujuan Anda sudah disimpan (diunduh ke folder download Anda).');
+                            
+                            document.getElementById('approval-form').reset();
+                            signaturePad.clear();
+                            resizeCanvas(); // Reset canvas size and clear after form reset
+
+                        }).catch(err => {
+                            console.error("Gagal membuat PDF:", err);
+                            alert("Terjadi kesalahan saat membuat PDF. Silakan coba lagi. (Lihat konsol untuk detail error)");
+                        }).finally(() => {
+                            submitButton.disabled = false;
+                            submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
+                        });
+                    }, 200); // Beri jeda 200ms
+                } catch (error) {
+                    console.error("Gagal memuat sumber daya gambar atau proses fetch gagal:", error);
+                    alert("Gagal memuat logo untuk PDF atau ada masalah koneksi. Periksa koneksi internet Anda dan coba lagi. (Lihat konsol untuk detail error)");
+                    submitButton.disabled = false;
+                    submitButton.innerText = 'Simpan dan Buat Surat Persetujuan';
+                }
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
